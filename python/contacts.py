@@ -1,0 +1,64 @@
+import sqlite3
+from pathlib import Path
+
+
+class Contacts:
+    def __init__(self, db_path):
+        self.db_path = db_path
+        if not db_path.exists():
+            print("Migrating db")
+            connection = sqlite3.connect(db_path)
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE contacts(
+                  id INTEGER PRIMARY KEY,
+                  name TEXT NOT NULL,
+                  email TEXT NOT NULL
+                )
+              """
+            )
+            connection.commit()
+        self.connection = sqlite3.connect(db_path)
+        self.connection.row_factory = sqlite3.Row
+
+    def insert_contacts(self, contacts):
+        print("Inserting contacts ...")
+        # TODO
+
+    def get_name_for_email(self, email):
+        print("Looking for email", email)
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """
+            SELECT * FROM contacts
+            WHERE email = ?
+            """,
+            (email,),
+        )
+        row = cursor.fetchone()
+        if row:
+            name = row["name"]
+            print(f"Found name: '{name}'")
+            return name
+        else:
+            print("Not found")
+
+
+def yield_contacts():
+    # TODO: Generate a lot of contacts
+    # instead of just 3
+    yield ("Alice", "alice@domain.tld")
+    yield ("Bob", "bob@foo.com")
+    yield ("Charlie", "charlie@acme.corp")
+
+
+def main():
+    db_path = Path("contacts.sqlite3")
+    contacts = Contacts(db_path)
+    contacts.insert_contacts(yield_contacts())
+    charlie = contacts.get_name_for_email("charlie@acme.corp")
+
+
+if __name__ == "__main__":
+    main()
