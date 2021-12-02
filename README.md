@@ -1,29 +1,88 @@
-# Contacts kata
+# Contacts database
 
-*Goal: measure the performance of an application using sql,
-with and without index*.
+*Goal: measure performance of a simple application in two scenarios -
+with and without a SQL index*
 
-# Steps
+# Step 1 - measure performance without an index
 
-* Start with java, javascript or Python (warning: javascript is harder)
+* Create a 'contacts' table
 
-* Change the code so that you can generate up to 1million contacs
-and store them in the db.
-
-* Fill up the following table
-
-| size of the db | time of the query |
-|----------------|-------------------|
-| 10             |                   |
-| 100            |                   |
-| 1000           |                   |
-| ...            |                   |
-| 100000         |                   |
-
-* Now introduce an index
+Hint: You may use the following SQL code:
 
 ```sql
-CREATE UNIQUE INDEX index_emails ON contacts(emails);
+CREATE TABLE contacts(
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL
+)
 ```
 
-* Redo the measurements
+* Write a `generateContacts` method (or function) that knows
+  how to generate many contacts, with a reasonable space complexity.
+
+For instance:
+
+```javascript
+// Note: this does _not_ generate a list of `numContacts` elements
+function * generateContacts (numContacts) {
+  let i = 1
+  while (i <= numContacts) {
+    yield [`name-${i}`, `email-${i}@domain.tld`]
+    i++
+  }
+}
+```
+
+* Given a number `n` of contacts passed as a command line argument, generate
+  `n` contacts and insert them in the database
+
+*Note: you will need to use batches for the insertion*
+
+* Write code to measure the time it takes to retrieve the name of the last contact from the database
+  given its email.
+
+For instance:
+
+```java
+String email = String.format("email-%d@domain.tld", numContacts);
+long start = System.currentTimeMillis();
+String query = "SELECT name FROM contacts WHERE email = ?";
+long end = System.currentTimeMillis();
+long elapsed = end - start;
+System.out.format("Query took %f seconds\n", elapsed / 1000.0);
+```
+
+* Create a table matching the size of the database with the duration of
+  the query (in milliseconds):
+
+| size    | time (in ms) |
+|---------|--------------|
+| 10      | ...          |
+| 100     | ...          |
+| 10000   | ...          |
+| 10,000  | ...          |
+| 50,000  | ...          |
+| 100,000 | ...          |
+| ...     | ...          |
+
+
+
+Go to 1 million if you can.
+
+Make a graph from the table. Does the result match what you would expect ?
+
+# Step 2 - measure performance with an index
+
+Redo the measurements, but this time, create an index *before* inserting the contacts:
+
+```sql
+CREATE TABLE contacts(
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL
+)
+
+CREATE UNIQUE INDEX index_contacts_email ON contacts(email);
+```
+
+Make a graph for the new result. Does it match what you would expect ?
