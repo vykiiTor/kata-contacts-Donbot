@@ -1,5 +1,6 @@
 import sqlite3
 from pathlib import Path
+from datetime import datetime
 
 
 class Contacts:
@@ -29,6 +30,7 @@ class Contacts:
     def get_name_for_email(self, email):
         print("Looking for email", email)
         cursor = self.connection.cursor()
+        start = datetime.now()
         cursor.execute(
             """
             SELECT * FROM contacts
@@ -37,6 +39,10 @@ class Contacts:
             (email,),
         )
         row = cursor.fetchone()
+        end = datetime.now()
+
+        elapsed = end - start
+        print("query took", elapsed.microseconds / 1000, "ms")
         if row:
             name = row["name"]
             print(f"Found name: '{name}'")
