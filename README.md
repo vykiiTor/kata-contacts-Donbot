@@ -34,11 +34,12 @@ function * generateContacts (numContacts) {
 ```
 
 * Given a number `n` of contacts passed as a command line argument, generate
-  `n` contacts and insert them in the database
+  `n` contacts and insert them in the database. `n` can be as big as 1 million.
 
-*Note: you will need to use batches for the insertion*
+*Note: inserting contacts one by one will be to slow, but inserting 1millions contacts at once
+will probably not work either. You'll have to be smart.*
 
-* Write code to measure the time it takes to retrieve the name of the last contact from the database
+* Write code to measure the time it takes to retrieve the name of the **last** contact from the database
   given its email.
 
 For instance:
@@ -66,8 +67,6 @@ System.out.format("Query took %f seconds\n", elapsed / 1000.0);
 | ...     | ...          |
 
 
-
-Go to 1 million if you can.
 
 Make a graph from the table. Does the result match what you would expect ?
 
