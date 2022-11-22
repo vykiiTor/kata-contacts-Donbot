@@ -8,9 +8,7 @@ with and without a SQL index*
 Run the main application with a small number of contacts (<100)
 see various readme by languages on how to do that.
 
-You'll get an error message because the code is not complete
-
-You'll have to implements the `TODO` comments.
+You'll get an error message because the code is not complete, so start by implementing the `TODO` comments.
 
 Create a document matching the size of the database with the duration of
 the query (in milliseconds):
