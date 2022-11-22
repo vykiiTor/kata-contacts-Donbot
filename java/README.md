@@ -3,5 +3,6 @@
 Run the application with:
 
 ```
-./mnv:exec -Dexec.args=<Number of contacts>
+mvn compile
+mnv exec:java -Dexec.args=<Number of contacts>
 ```
