@@ -1,9 +1,10 @@
 const sqlite3 = require('sqlite3')
 const open = require('sqlite').open
 const fs = require('fs')
+const process = require('process')
 
 const filename = 'contacts.sqlite3'
-const numContacts = 3 // TODO: read from process.argv
+const numContacts = parseInt(process.argv[2], 10);
 
 const shouldMigrate = !fs.existsSync(filename)
 
