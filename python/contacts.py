@@ -1,3 +1,4 @@
+import sys
 import sqlite3
 from pathlib import Path
 from datetime import datetime
@@ -51,7 +52,7 @@ class Contacts:
             print("Not found")
 
 
-def yield_contacts():
+def yield_contacts(num_contacts):
     # TODO: Generate a lot of contacts
     # instead of just 3
     yield ("Alice", "alice@domain.tld")
@@ -60,9 +61,10 @@ def yield_contacts():
 
 
 def main():
+    num_contacts = int(sys.argv[1])
     db_path = Path("contacts.sqlite3")
     contacts = Contacts(db_path)
-    contacts.insert_contacts(yield_contacts())
+    contacts.insert_contacts(yield_contacts(num_contacts))
     charlie = contacts.get_name_for_email("charlie@acme.corp")
 
 
