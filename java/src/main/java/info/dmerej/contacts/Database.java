@@ -36,8 +36,20 @@ public class Database {
         System.out.println("Done migrating database");
     }
 
+
     public void insertContacts(Stream<Contact> contacts) {
-        // TODO
+        contacts.peek(contact -> {
+            try {
+                PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO contacts (name, email) VALUES (?, ?)"
+                );
+                ps.setString(1, contact.name());
+                ps.setString(2, contact.email());
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("Insertion error", e);
+            }
+        }).collect(Collectors.toList());
     }
 
     public String getContactNameFromEmail(String email) {
