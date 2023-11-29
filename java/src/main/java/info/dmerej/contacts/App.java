@@ -51,6 +51,7 @@ public class App {
         long end = System.currentTimeMillis();
         long elapsed = end - start;
         System.out.format("Query took %f seconds\n", elapsed / 1000.0);
+
     }
 
     public void close() {
