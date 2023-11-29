@@ -49,20 +49,34 @@ public class Database {
         System.out.println("Done migrating database");
     }
 
-
     public void insertContacts(Stream<Contact> contacts) {
-        contacts.peek(contact -> {
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO contacts (name, email) VALUES (?, ?)"
-                );
-                ps.setString(1, contact.name());
-                ps.setString(2, contact.email());
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException("Insertion error", e);
-            }
-        }).collect(Collectors.toList());
+        final int batchSize = 500;
+        Iterator<Contact> contactIterator = contacts.iterator();
+        Spliterator<Contact> spliterator = Spliterators.spliteratorUnknownSize(contactIterator, 0);
+        Stream<Contact> contactStream = StreamSupport.stream(spliterator, false);
+
+        contactStream
+                .map(contact -> {
+                    try {
+                        PreparedStatement ps = connection.prepareStatement(
+                                "INSERT INTO contacts (name, email) VALUES (?, ?)"
+                        );
+                        ps.setString(1, contact.name());
+                        ps.setString(2, contact.email());
+                        ps.addBatch();
+                        return ps;
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Batch preparation error", e);
+                    }
+                })
+                .forEach(ps -> {
+                    try {
+                        ps.executeBatch();
+                        ps.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Batch execution error", e);
+                    }
+                });
     }
 
     public String getContactNameFromEmail(String email) {
