@@ -3,6 +3,7 @@ package info.dmerej.contacts;
 import java.io.File;
 import java.sql.*;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class Database {
     private Connection connection;
